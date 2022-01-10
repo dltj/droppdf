@@ -27,6 +27,13 @@ from apps.utils.files import save_temp_file, cleanup_temp_file, check_file_exist
 
 from apps.models import FileUpload
 
+from googleapiclient.discovery import build
+from googleapiclient.http import MediaIoBaseDownload
+from google.oauth2 import service_account
+#from oauth2client.service_account import ServiceAccountCredentials
+
+import requests
+
 
 def _soffice_process(tempfile_path, filename, md5_hash, process_type):
     '''create processed file,upload to s3, store ref'''
@@ -238,6 +245,48 @@ def handle_gdrive_doc(request):
         file_id = s.get('ids')[0]
     except:
         raise HTTPExceptions.UNPROCESSABLE_ENTITY
+
+    url = 'https://drive.google.com/uc?id=' + file_id;
+
+    s = '/home/paul/Desktop/docdropdrivev2-37313545bc92.json'
+
+    #c = open('/home/paul/Desktop/docdropdrivev2-37313545bc92.json').read()
+    #creds = json.loads(c)
+
+    #credentials = service_account.Credentials.from_service_account_info(creds)
+    #credentials = ServiceAccountCredentials.from_json_keyfile_name(s, scopes=settings.SCOPES)
+
+    #print(credentials)
+
+    drive_service = build('drive', 'v3', credentials=credentials)
+
+    print(dir(drive_service))
+
+    #print(drive_service)
+
+    #print(dir(drive_service.files().list()))
+    print(file_id)
+    print(drive_service.files().get(fileId=file_id).execute())
+
+    #print('YY', creds)
+
+    #print('XXX', url)
+
+    #return redirect(url)
+
+    #return render(request, 'viewer.html', {'pdf_url': url})
+
+    r = requests.get(url, allow_redirects=True)
+
+    t = '/tmp/my_file.pdf'
+
+    open(t, 'wb').write(r.content)
+
+    #print('YY', dir(content))
+    #print('YY', content.content)
+
+    #drive_service = build('drive', 'v3', credentials=creds)
+
 
     return render(request, 'process_gdrive_request.html', {'request': request,
         'CLIENT_ID': settings.CLIENT_ID, 'API_KEY': settings.API_KEY,
