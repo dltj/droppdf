@@ -5,9 +5,19 @@ from django.shortcuts import render
 from youtube_transcript_api import YouTubeTranscriptApi
 import requests
 
+from django.conf import settings
+
 
 def youtube_video(request, video_id):
     condensed_transcript = []
+
+    #url = 'https://www.googleapis.com/youtube/v3/captions'
+    #url += '?key' + settings.API_KEY
+    #url += '&videoId=' + video_id
+
+    #rslt = requests.get(url) 
+
+    #print(rslt)
 
     #language may be passed as query string. ?lang=de
     #multiple comma seperated languages are acceptable i.e ?lang=en,de
